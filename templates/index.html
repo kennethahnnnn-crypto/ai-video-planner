@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="dark"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draftie - AI Video Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav class="navbar navbar-dark mb-5" style="background-color: #121212; border-bottom: 1px solid #333;">
+    <div class="container">
+        <div class="d-flex align-items-center">
+            <a class="navbar-brand brand-logo fs-3" href="/">Draftie.</a>
+            <span class="badge bg-dark border border-secondary text-secondary ms-2" style="font-size: 0.7rem;">Beta</span>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="text-end lh-1">
+                <span class="d-block text-white-50 small" style="font-size: 0.75rem;">Credit</span>
+                <span class="fw-bold" style="color: var(--draftie-yellow);">{{ user.credits }}</span>
+            </div>
+
+            <div class="vr text-secondary"></div> <a href="/logout" class="btn btn-outline-secondary btn-sm px-3 rounded-pill" style="font-size: 0.85rem;">
+                Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container main-container" style="max-width: 800px;">
+    
+    <div class="text-center mb-5">
+        <h1 class="display-4 mb-3">Your First Cut, <span style="color: var(--draftie-yellow);">Done by AI.</span></h1>
+        <p class="text-secondary fs-5">아이디어만 던져주세요.<br>Draftie가 촬영 콘티와 시안을 30초 만에 설계합니다.</p>
+    </div>
+
+    <div class="card shadow-lg mb-5" style="border-radius: 15px;">
+        <div class="card-body p-5">
+            <form action="/generate" method="post">
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-secondary small fw-bold">PLATFORM</label>
+                        <select name="platform" class="form-select form-select-lg">
+                            <option value="YouTube Shorts">YouTube Shorts</option>
+                            <option value="Instagram Reels">Instagram Reels</option>
+                            <option value="TikTok">TikTok</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-secondary small fw-bold">DURATION</label>
+                        <select name="duration" class="form-select form-select-lg">
+                            <option value="15초">15 Sec (Short)</option>
+                            <option value="30초" selected>30 Sec (Standard)</option>
+                            <option value="60초">60 Sec (Long)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-secondary small fw-bold">VIBE & STYLE</label>
+                        <select name="style" class="form-select form-select-lg">
+                            <option value="Cinematic">Cinematic (실사)</option>
+                            <option value="Minimalist">Minimalist (깔끔)</option>
+                            <option value="Dynamic & Fast">Dynamic (빠른 템포)</option>
+                            <option value="3D Animation">3D Animation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-secondary small fw-bold">PRODUCT / TOPIC</label>
+                    <textarea name="product_desc" class="form-control" rows="4" placeholder="예: 무선 청소기. 흡입력이 강하고 가벼움. 자취생 필수템. (자세할수록 좋습니다)"></textarea>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg py-3 rounded-3 shadow-sm">
+                        ✨ Draftie 실행하기 (Generate)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-center text-secondary mb-5">
+        <small>Powered by Gemini 2.5 & DALL-E 3</small>
+    </div>
+
+</div>
+
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; text-align:center; padding-top:20vh;">
+    <div class="spinner-border" style="width: 3rem; height: 3rem; color: var(--draftie-yellow);" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <h3 class="text-white mt-4 fw-bold">Draftie is working...</h3>
+    
+    <div class="mt-3 text-white-50">
+        <p class="fs-5">고퀄리티 이미지를 한 땀 한 땀 그리고 있습니다. 🎨</p>
+        <p class="small text-danger fw-bold bg-dark d-inline-block px-3 py-1 rounded">
+            ⚠️ 최대 5분 정도 소요될 수 있습니다. 창을 닫지 말고 기다려주세요!
+        </p>
+    </div>
+</div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function() {
+        document.getElementById('loadingOverlay').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>

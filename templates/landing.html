@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draftie - AI Video Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .hero-section {
+            padding: 100px 0;
+            background: radial-gradient(circle at center, #2a2a2a 0%, #121212 70%);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--draftie-yellow);
+            margin-bottom: 1rem;
+        }
+        .step-card {
+            background-color: #1E1E1E;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--draftie-yellow);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark py-3" style="background-color: transparent;">
+    <div class="container">
+        <a class="navbar-brand brand-logo fs-3" href="/">Draftie.</a>
+        <div>
+            <a href="/login" class="btn btn-outline-light btn-sm rounded-pill px-3 me-2">Log In</a>
+            <a href="/signup" class="btn btn-primary btn-sm rounded-pill px-3">Sign Up</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero-section text-center">
+    <div class="container">
+        <span class="badge border border-warning text-warning rounded-pill mb-3 px-3 py-2">BETA OPEN</span>
+        <h1 class="display-3 fw-bold mb-4 lh-sm">
+            Viral Video Planning,<br>
+            <span style="color: var(--draftie-yellow);">Done in No Time.</span>
+        </h1>
+        <p class="lead text-secondary mb-5 mx-auto" style="max-width: 600px;">
+            유튜브 쇼츠, 릴스 기획이 막막하신가요?<br>
+            아이디어 한 줄이면 <b>시나리오부터 콘티 시각화까지</b> AI가 완성해 드립니다.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/signup" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg">
+                무료로 시작하기 (3 Credits)
+            </a>
+        </div>
+        <p class="small text-secondary mt-3">카드 등록 없음 · 즉시 사용 가능</p>
+    </div>
+</section>
+
+<section class="container py-5 mb-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card step-card h-100 p-4 text-center">
+                <div class="feature-icon">💡</div>
+                <h4 class="text-white mb-3">1. 아이디어 입력</h4>
+                <p class="text-secondary">간단한 주제나 상품 설명만 입력하세요.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card step-card h-100 p-4 text-center">
+                <div class="feature-icon">📝</div>
+                <h4 class="text-white mb-3">2. AI 시나리오 설계</h4>
+                <p class="text-secondary">Gemini 2.5가 트렌디한 대본을 짭니다.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card step-card h-100 p-4 text-center">
+                <div class="feature-icon">🎨</div>
+                <h4 class="text-white mb-3">3. 비주얼 콘티 완성</h4>
+                <p class="text-secondary">DALL-E 3가 촬영 가이드를 그려줍니다.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="text-center py-5 border-top border-secondary border-opacity-10 mt-auto">
+    <div class="container">
+        <p class="text-secondary small mb-2">
+            &copy; 2025 <b>Draftie</b>. All rights reserved.
+        </p>
+        
+        <div class="d-flex justify-content-center align-items-center gap-2">
+            <span class="text-secondary" style="font-size: 0.8rem;">Family Service :</span>
+            <a href="https://clausemate.app" target="_blank" class="text-decoration-none fw-bold" style="color: #999; font-size: 0.85rem; transition: color 0.2s;">
+                ClauseMate.app ⚖️
+            </a>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* ClauseMate 링크에 마우스 올리면 노란색으로 변하는 효과 */
+    footer a:hover {
+        color: var(--draftie-yellow) !important;
+    }
+</style>
+
+</body>
+</html>
