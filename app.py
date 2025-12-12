@@ -176,7 +176,7 @@ def generate():
         scenes = json.loads(text_result)
         
         # 이미지 생성 (병렬)
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=3) as executor:
             list(executor.map(generate_image_for_scene, scenes))
 
         # 크레딧 1 차감 및 저장

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#FFD000"/>
+  
+  <text x="50%" y="50%" 
+        font-family="Arial, sans-serif" 
+        font-weight="900" 
+        font-size="350" 
+        fill="#121212" 
+        text-anchor="middle" 
+        dy=".35em">D</text>
+</svg>
