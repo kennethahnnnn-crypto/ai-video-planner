@@ -23,10 +23,24 @@ h1, h2, h3, h4, h5 {
     font-weight: 700;
 }
 
+/* static/style.css 에 추가/수정 */
+
 .brand-logo {
     color: var(--draftie-yellow);
     font-weight: 900;
     letter-spacing: -1px;
+    /* 추가된 부분: 부드러운 움직임을 위해 */
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: inline-block; /* 크기 조절을 위해 필수 */
+}
+
+/* 마우스 올렸을 때 효과 */
+.brand-logo:hover,
+a:hover > .brand-logo { /* 링크 안에 있는 로고에 마우스 올렸을 때도 포함 */
+    color: #ffffff !important; /* 흰색으로 반짝! */
+    transform: scale(1.05);    /* 톡 하고 튀어나오는 느낌 */
+    text-shadow: 0 0 10px rgba(255, 208, 0, 0.5); /* 노란색 후광 효과 */
+    cursor: pointer;
 }
 
 .card {
