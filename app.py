@@ -225,5 +225,29 @@ def view_project(project_id):
     scenes = json.loads(project.scenes_json)
     return render_template('result.html', scenes=scenes, title=project.title, user=current_user)
 
+@app.route('/fix-master')
+def fix_master():
+    try:
+        # 1. 기존 마스터 계정이 있으면 삭제
+        existing_master = User.query.filter_by(username='master@draftie.app').first()
+        if existing_master:
+            db.session.delete(existing_master)
+            db.session.commit()
+        
+        # 2. 마스터 계정 새로 생성 (비번: 1234)
+        # pbkdf2 방식은 안전하면서 호환성이 좋습니다.
+        master_pw = generate_password_hash('1234', method='pbkdf2:sha256')
+        new_master = User(username='master@draftie.app', password=master_pw, credits=9999)
+        
+        db.session.add(new_master)
+        db.session.commit()
+        
+        return "✅ 마스터 계정 복구 완료! <br>ID: master@draftie.app <br>PW: 1234 <br><a href='/login'>로그인하러 가기</a>"
+        
+    except Exception as e:
+        return f"❌ 오류 발생: {e}"
+
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
