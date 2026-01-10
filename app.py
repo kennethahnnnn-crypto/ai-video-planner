@@ -172,6 +172,7 @@ def generate():
     """
 
     try:
+        # 1. 텍스트 기획 (Gemini)
         response = client_text.models.generate_content(
             model='gemini-2.5-flash',
             contents=prompt
@@ -179,11 +180,17 @@ def generate():
         text_result = response.text.replace("```json", "").replace("```", "").strip()
         scenes = json.loads(text_result)
         
-        # 2. 이미지 생성 (Replicate - Flux)
-        # 5불 충전 완료! 이제 병렬 처리로 3장을 동시에 만듭니다. (속도 3배 향상)
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            list(executor.map(generate_image_for_scene, scenes))
+        # 2. 이미지 생성 (수정된 부분: 순차 처리 + 대기 시간)
+        # Replicate 잔액 이슈($5/$10 구간)를 피하기 위해 한 장씩 천천히 만듭니다.
+        print("🚦 이미지 생성을 시작합니다 (순차 처리 모드)")
+        
+        for scene in scenes:
+            generate_image_for_scene(scene)
+            # 중요: API가 숨 쉴 시간을 줍니다. (2초 대기)
+            # 만약 또 429 에러가 나면 이 숫자를 5로 늘려주세요.
+            time.sleep(5) 
 
+        # 3. 저장 (기존과 동일)
         json_string = json.dumps(scenes, ensure_ascii=False)
         new_project = Project(
             user_id=current_user.id,
