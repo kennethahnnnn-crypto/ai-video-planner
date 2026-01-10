@@ -64,15 +64,15 @@ with app.app_context():
     except Exception as e:
         print(f"⚠️ DB 초기화 오류: {e}")
 
-# --- [핵심] Google Imagen 3 이미지 생성 함수 ---
+# --- [핵심] Google Imagen 4 이미지 생성 함수 ---
 def generate_image_for_scene(scene):
     try:
         if scene.get('image_prompt'):
             print(f"🎨 이미지 생성 요청 (Imagen 3)... (Scene {scene['scene_num']})")
             
-            # Imagen 3 모델 호출
+            # Imagen 4 모델 호출
             response = client.models.generate_images(
-                model='imagen-3.0-generate-001',
+                model='imagen-4.0-generate-001',
                 prompt=scene['image_prompt'],
                 config=types.GenerateImagesConfig(
                     number_of_images=1,
