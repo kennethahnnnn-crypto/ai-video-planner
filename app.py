@@ -232,6 +232,13 @@ def fix_master():
         return "마스터 계정 리셋 완료"
     except Exception as e:
         return f"에러: {e}"
+    
+# app.py 하단 라우트 부분
+
+@app.route('/ads.txt')
+def ads_txt():
+    # static 폴더에 있는 ads.txt 파일을 읽어서 보여줌
+    return app.send_static_file('ads.txt')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
