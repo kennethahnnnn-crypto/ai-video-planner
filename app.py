@@ -72,7 +72,7 @@ def generate_image_for_scene(scene):
             
             # Imagen 3 모델 호출
             response = client.models.generate_images(
-                model='imagen-3.0-generate-002',
+                model='imagen-3.0-generate-001',
                 prompt=scene['image_prompt'],
                 config=types.GenerateImagesConfig(
                     number_of_images=1,
