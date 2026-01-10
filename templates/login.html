@@ -50,23 +50,33 @@
         </div>
     </div>
 
-    <footer class="text-center py-4 border-top border-secondary border-opacity-10 mt-auto">
-        <div class="container">
-            <p class="text-secondary small mb-2">
-                &copy; 2025 <b>Draftie</b>. All rights reserved.
-            </p>
-            <div class="d-flex justify-content-center align-items-center gap-2">
-                <span class="text-secondary" style="font-size: 0.8rem;">Family Service :</span>
-                <a href="https://clausemate.app" target="_blank" class="text-decoration-none fw-bold" style="color: #999; font-size: 0.85rem; transition: color 0.2s;">
-                    ClauseMate.app ⚖️
-                </a>
-            </div>
+    <footer class="text-center py-5 border-top border-secondary border-opacity-10 mt-auto" style="background-color: #000;">
+    <div class="container">
+        
+        <div class="mb-4 d-flex justify-content-center gap-4">
+            <a href="/terms" class="text-decoration-none text-secondary small fw-bold footer-link">이용약관</a>
+            <a href="/privacy" class="text-decoration-none text-secondary small fw-bold footer-link">개인정보처리방침</a>
         </div>
-    </footer>
+
+        <p class="text-secondary small mb-3">
+            &copy; 2026 <b>Draftie</b>. All rights reserved.<br>
+            <span class="text-white-50" style="font-size: 0.75rem;">Powered by Google Gemini & Replicate Flux</span>
+        </p>
+        
+        <div class="d-flex justify-content-center align-items-center gap-2 p-2 rounded" style="background-color: rgba(255,255,255,0.05); display: inline-flex !important; width: fit-content; margin: 0 auto;">
+            <span class="text-secondary" style="font-size: 0.8rem;">Family Service :</span>
+            <a href="https://clausemate.app" target="_blank" class="text-decoration-none fw-bold" style="color: #999; font-size: 0.85rem; transition: color 0.2s;">
+                ClauseMate.app ⚖️
+            </a>
+        </div>
+
+    </div>
     
     <style>
-        footer a:hover { color: var(--draftie-yellow) !important; }
+        .footer-link { transition: color 0.2s; }
+        .footer-link:hover { color: #fff !important; text-decoration: underline !important; }
     </style>
+</footer>
 
 </body>
 </html>
