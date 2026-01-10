@@ -5,4 +5,5 @@ python-dotenv
 gunicorn
 psycopg2-binary
 google-genai
+replicate
 requests

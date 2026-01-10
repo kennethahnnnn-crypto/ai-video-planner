@@ -1,15 +1,14 @@
 import os
 import json
 import time
-import base64
-from io import BytesIO
+import requests # 이미지 다운로드용
 from flask import Flask, render_template, request, redirect, url_for, flash
+import google.generativeai as genai # 구버전 호환용 (혹시 모를 에러 방지)
+from google import genai as genai_v2 # 신버전 SDK
+from google.genai import types
+import replicate # [NEW] Replicate 추가
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
-
-# [NEW] Google Gen AI 최신 라이브러리 (v1.0+)
-from google import genai
-from google.genai import types
 
 # DB 및 로그인
 from flask_sqlalchemy import SQLAlchemy
@@ -21,16 +20,18 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# --- [설정] API 키 및 경로 ---
+# --- API 키 설정 ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Render 환경변수에 REPLICATE_API_TOKEN 추가 필수!
+# (라이브러리가 알아서 os.environ["REPLICATE_API_TOKEN"]을 찾습니다)
 
 if not GEMINI_API_KEY:
-    print("❌ 경고: GEMINI_API_KEY가 설정되지 않았습니다!")
+    print("❌ 경고: GEMINI_API_KEY가 없습니다!")
 
-# Google Client 초기화 (이거 하나로 텍스트/이미지 다 씀)
-client = genai.Client(api_key=GEMINI_API_KEY)
+# 1. 텍스트 기획용 (Gemini) - Google Client
+client_text = genai_v2.Client(api_key=GEMINI_API_KEY)
 
-# 이미지 저장 경로 설정 (static 폴더 아래)
+# 이미지 저장 경로
 UPLOAD_FOLDER = 'static/generated'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -39,7 +40,7 @@ db_url = os.getenv("DATABASE_URL", "sqlite:///database.db")
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
 
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-dev-key')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -52,63 +53,66 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# 앱 시작 시 DB 생성
+# 앱 시작 시 DB 초기화 및 복구 라우트용 로직은 그대로 유지...
 with app.app_context():
     try:
         db.create_all()
         if not User.query.filter_by(username='master@draftie.app').first():
-            master_pw = generate_password_hash('1234')
-            new_master = User(username='master@draftie.app', password=master_pw, credits=9999)
+            new_master = User(username='master@draftie.app', password=generate_password_hash('1234'), credits=999)
             db.session.add(new_master)
             db.session.commit()
     except Exception as e:
-        print(f"⚠️ DB 초기화 오류: {e}")
+        print(f"DB Error: {e}")
 
-# --- [핵심] Google Imagen 4 이미지 생성 함수 ---
+# --- [핵심 변경] Replicate (Flux) 이미지 생성 함수 ---
 def generate_image_for_scene(scene):
     try:
         if scene.get('image_prompt'):
-            print(f"🎨 이미지 생성 요청 (Imagen 3)... (Scene {scene['scene_num']})")
+            print(f"🎨 이미지 생성 요청 (Flux)... (Scene {scene['scene_num']})")
             
-            # Imagen 4 모델 호출
-            response = client.models.generate_images(
-                model='imagen-4.0-generate-001',
-                prompt=scene['image_prompt'],
-                config=types.GenerateImagesConfig(
-                    number_of_images=1,
-                    aspect_ratio="1:1" # 필요하면 "16:9" 등으로 변경 가능
-                )
+            # 1. Replicate로 이미지 생성 (URL 반환)
+            output = replicate.run(
+                "black-forest-labs/flux-schnell", # 가성비/속도 최강 모델
+                input={
+                    "prompt": scene['image_prompt'],
+                    "go_fast": True,
+                    "megapixels": "1",
+                    "num_outputs": 1,
+                    "aspect_ratio": "1:1",
+                    "output_format": "webp",
+                    "output_quality": 80
+                }
             )
+            # output은 리스트 형태 ["https://..."]
+            image_url_remote = output[0]
             
-            # Google은 URL이 아니라 이미지 데이터(bytes)를 줍니다.
-            # 그래서 파일로 저장해야 합니다.
-            for generated_image in response.generated_images:
-                # 파일명 생성 (유니크하게)
-                filename = f"scene_{int(time.time())}_{scene['scene_num']}.png"
-                filepath = os.path.join(UPLOAD_FOLDER, filename)
-                
-                # 저장
-                with open(filepath, "wb") as f:
-                    f.write(generated_image.image.image_bytes)
-                
-                # 웹에서 접근할 수 있는 경로 저장
-                scene['image_url'] = f"/{UPLOAD_FOLDER}/{filename}"
-                
+            # 2. URL 이미지를 내 서버로 다운로드 (영구 소장 위해)
+            filename = f"scene_{int(time.time())}_{scene['scene_num']}.webp"
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            
+            img_data = requests.get(image_url_remote).content
+            with open(filepath, 'wb') as f:
+                f.write(img_data)
+            
+            # 3. 웹 표시용 경로 저장
+            scene['image_url'] = f"/{UPLOAD_FOLDER}/{filename}"
+            
         else:
             scene['image_url'] = None
             
     except Exception as e:
         print(f"❌ 이미지 생성 실패 (Scene {scene.get('scene_num')}): {e}")
-        # 에러 시 기본 이미지
-        scene['image_url'] = "https://placehold.co/1024x1024?text=Image+Error"
+        # 실패 시 에러 이미지 표시
+        scene['image_url'] = "https://placehold.co/1024x1024?text=Image+Generation+Failed"
         
     return scene
 
-# ================= 라우트 정의 =================
+# ... (나머지 라우트 코드들은 그대로 유지) ...
 
 @app.route('/')
 def index():
     if current_user.is_authenticated:
+        # 내 프로젝트 목록 최신순 조회
         my_projects = Project.query.filter_by(user_id=current_user.id).order_by(Project.created_at.desc()).all()
         return render_template('index.html', user=current_user, projects=my_projects)
     else:
@@ -139,7 +143,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            flash('아이디/비번 확인 필요')
+            flash('아이디/비번 확인')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -152,15 +156,13 @@ def logout():
 @login_required
 def generate():
     if current_user.credits <= 0:
-        return "<h3>크레딧 부족!</h3><a href='/'>뒤로가기</a>"
+        return "<h3>크레딧 부족</h3><a href='/'>뒤로가기</a>"
 
-    # 입력 받기
     platform = request.form.get('platform')
     duration = request.form.get('duration')
     style = request.form.get('style')
     product_desc = request.form.get('product_desc')
 
-    # 프롬프트 구성
     prompt = f"""
     당신은 전문 영상 광고 디렉터입니다.
     [요청사항]
@@ -174,27 +176,25 @@ def generate():
             "time": "0-3초",
             "script": "대사",
             "visual_desc": "화면 설명",
-            "image_prompt": "High quality image generation prompt for Imagen 3, describing this scene visually, style is {style}, english"
+            "image_prompt": "High quality image generation prompt for realistic style, describing this scene visually, style is {style}, english"
         }}
     ]
     """
 
     try:
-        # 1. Gemini 2.5 Flash로 기획안 생성 (텍스트)
-        # 새 SDK 문법 적용
-        response = client.models.generate_content(
+        # 1. 텍스트 기획 (Gemini)
+        response = client_text.models.generate_content(
             model='gemini-2.5-flash',
             contents=prompt
         )
-        
         text_result = response.text.replace("```json", "").replace("```", "").strip()
         scenes = json.loads(text_result)
         
-        # 2. Imagen 3로 이미지 병렬 생성
+        # 2. 이미지 생성 (Replicate - Flux)
         with ThreadPoolExecutor(max_workers=3) as executor:
             list(executor.map(generate_image_for_scene, scenes))
 
-        # 3. DB 저장
+        # 3. 저장
         json_string = json.dumps(scenes, ensure_ascii=False)
         new_project = Project(
             user_id=current_user.id,
@@ -204,17 +204,16 @@ def generate():
             style=style,
             scenes_json=json_string
         )
-        
         current_user.credits -= 1
         db.session.add(new_project)
         db.session.commit()
 
-        flash('기획안 생성 및 저장 완료!')
+        flash('기획안 생성 완료!')
         return render_template('result.html', scenes=scenes, title=product_desc, user=current_user)
 
     except Exception as e:
-        print(f"❌ 에러 발생: {e}")
-        return f"<h3>오류가 발생했습니다.</h3><p>{e}</p>"
+        print(f"❌ 에러: {e}")
+        return f"<h3>오류 발생: {e}</h3>"
 
 @app.route('/project/<int:project_id>')
 @login_required
@@ -225,29 +224,19 @@ def view_project(project_id):
     scenes = json.loads(project.scenes_json)
     return render_template('result.html', scenes=scenes, title=project.title, user=current_user)
 
+# 마스터 계정 복구용 (유지)
 @app.route('/fix-master')
 def fix_master():
     try:
-        # 1. 기존 마스터 계정이 있으면 삭제
-        existing_master = User.query.filter_by(username='master@draftie.app').first()
-        if existing_master:
-            db.session.delete(existing_master)
-            db.session.commit()
+        existing = User.query.filter_by(username='master@draftie.app').first()
+        if existing: db.session.delete(existing)
         
-        # 2. 마스터 계정 새로 생성 (비번: 1234)
-        # pbkdf2 방식은 안전하면서 호환성이 좋습니다.
-        master_pw = generate_password_hash('1234', method='pbkdf2:sha256')
-        new_master = User(username='master@draftie.app', password=master_pw, credits=9999)
-        
+        new_master = User(username='master@draftie.app', password=generate_password_hash('1234'), credits=999)
         db.session.add(new_master)
         db.session.commit()
-        
-        return "✅ 마스터 계정 복구 완료! <br>ID: master@draftie.app <br>PW: 1234 <br><a href='/login'>로그인하러 가기</a>"
-        
+        return "마스터 계정 리셋 완료"
     except Exception as e:
-        return f"❌ 오류 발생: {e}"
-
-
+        return f"에러: {e}"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
