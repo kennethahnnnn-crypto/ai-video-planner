@@ -179,8 +179,11 @@ def generate():
         text_result = response.text.replace("```json", "").replace("```", "").strip()
         scenes = json.loads(text_result)
         
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            list(executor.map(generate_image_for_scene, scenes))
+        # 2. 이미지 생성 (Replicate - Flux)
+        # 중요: $5 미만 계정의 속도 제한(Rate Limit)을 피하기 위해 한 장씩 순서대로 생성합니다.
+        for scene in scenes:
+            generate_image_for_scene(scene)
+            time.sleep(2) # 2초 휴식 (안전하게 처리하기 위함)
 
         json_string = json.dumps(scenes, ensure_ascii=False)
         new_project = Project(
