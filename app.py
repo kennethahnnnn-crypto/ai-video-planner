@@ -235,10 +235,27 @@ def fix_master():
     
 # app.py 하단 라우트 부분
 
+# ... (기존 코드들) ...
+
+# [추가할 부분] 법적 페이지 및 ads.txt 연결
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 @app.route('/ads.txt')
 def ads_txt():
-    # static 폴더에 있는 ads.txt 파일을 읽어서 보여줌
     return app.send_static_file('ads.txt')
+
+@app.route('/robots.txt')
+def robots():
+    return "User-agent: *\nAllow: /", 200, {'Content-Type': 'text/plain'}
+
+# if __name__ == '__main__':  <-- 이 줄 위에 넣으세요!
+#     app.run(...)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
