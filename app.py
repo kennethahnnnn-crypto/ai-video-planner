@@ -3,8 +3,8 @@ import json
 import time
 import requests # 이미지 다운로드용
 from flask import Flask, render_template, request, redirect, url_for, flash
-import google.generativeai as genai # 구버전 호환용 (혹시 모를 에러 방지)
-from google import genai as genai_v2 # 신버전 SDK
+# import google.generativeai as genai  <-- 삭제함 (더 이상 안 씀)
+from google import genai as genai_v2 # 신버전 SDK (이것만 씀)
 from google.genai import types
 import replicate # [NEW] Replicate 추가
 from dotenv import load_dotenv
@@ -23,7 +23,6 @@ app = Flask(__name__)
 # --- API 키 설정 ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Render 환경변수에 REPLICATE_API_TOKEN 추가 필수!
-# (라이브러리가 알아서 os.environ["REPLICATE_API_TOKEN"]을 찾습니다)
 
 if not GEMINI_API_KEY:
     print("❌ 경고: GEMINI_API_KEY가 없습니다!")
@@ -53,7 +52,7 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# 앱 시작 시 DB 초기화 및 복구 라우트용 로직은 그대로 유지...
+# 앱 시작 시 DB 초기화
 with app.app_context():
     try:
         db.create_all()
@@ -64,15 +63,14 @@ with app.app_context():
     except Exception as e:
         print(f"DB Error: {e}")
 
-# --- [핵심 변경] Replicate (Flux) 이미지 생성 함수 ---
+# --- [핵심] Replicate (Flux) 이미지 생성 함수 ---
 def generate_image_for_scene(scene):
     try:
         if scene.get('image_prompt'):
             print(f"🎨 이미지 생성 요청 (Flux)... (Scene {scene['scene_num']})")
             
-            # 1. Replicate로 이미지 생성 (URL 반환)
             output = replicate.run(
-                "black-forest-labs/flux-schnell", # 가성비/속도 최강 모델
+                "black-forest-labs/flux-schnell",
                 input={
                     "prompt": scene['image_prompt'],
                     "go_fast": True,
@@ -83,10 +81,8 @@ def generate_image_for_scene(scene):
                     "output_quality": 80
                 }
             )
-            # output은 리스트 형태 ["https://..."]
             image_url_remote = output[0]
             
-            # 2. URL 이미지를 내 서버로 다운로드 (영구 소장 위해)
             filename = f"scene_{int(time.time())}_{scene['scene_num']}.webp"
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             
@@ -94,25 +90,19 @@ def generate_image_for_scene(scene):
             with open(filepath, 'wb') as f:
                 f.write(img_data)
             
-            # 3. 웹 표시용 경로 저장
             scene['image_url'] = f"/{UPLOAD_FOLDER}/{filename}"
-            
         else:
             scene['image_url'] = None
             
     except Exception as e:
         print(f"❌ 이미지 생성 실패 (Scene {scene.get('scene_num')}): {e}")
-        # 실패 시 에러 이미지 표시
         scene['image_url'] = "https://placehold.co/1024x1024?text=Image+Generation+Failed"
         
     return scene
 
-# ... (나머지 라우트 코드들은 그대로 유지) ...
-
 @app.route('/')
 def index():
     if current_user.is_authenticated:
-        # 내 프로젝트 목록 최신순 조회
         my_projects = Project.query.filter_by(user_id=current_user.id).order_by(Project.created_at.desc()).all()
         return render_template('index.html', user=current_user, projects=my_projects)
     else:
@@ -182,7 +172,6 @@ def generate():
     """
 
     try:
-        # 1. 텍스트 기획 (Gemini)
         response = client_text.models.generate_content(
             model='gemini-2.5-flash',
             contents=prompt
@@ -190,11 +179,9 @@ def generate():
         text_result = response.text.replace("```json", "").replace("```", "").strip()
         scenes = json.loads(text_result)
         
-        # 2. 이미지 생성 (Replicate - Flux)
         with ThreadPoolExecutor(max_workers=3) as executor:
             list(executor.map(generate_image_for_scene, scenes))
 
-        # 3. 저장
         json_string = json.dumps(scenes, ensure_ascii=False)
         new_project = Project(
             user_id=current_user.id,
@@ -224,7 +211,6 @@ def view_project(project_id):
     scenes = json.loads(project.scenes_json)
     return render_template('result.html', scenes=scenes, title=project.title, user=current_user)
 
-# 마스터 계정 복구용 (유지)
 @app.route('/fix-master')
 def fix_master():
     try:
