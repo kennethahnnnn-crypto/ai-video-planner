@@ -254,6 +254,15 @@ def ads_txt():
 def robots():
     return "User-agent: *\nAllow: /", 200, {'Content-Type': 'text/plain'}
 
+# [추가] 콘텐츠 가이드 페이지 (AdSense 승인용)
+@app.route('/guide/shorts')
+def guide_shorts():
+    return render_template('guide_shorts.html')
+
+@app.route('/guide/reels')
+def guide_reels():
+    return render_template('guide_reels.html')
+
 # if __name__ == '__main__':  <-- 이 줄 위에 넣으세요!
 #     app.run(...)
 

@@ -25,13 +25,25 @@
 
     <nav class="navbar navbar-dark py-3" style="background-color: transparent;">
         <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand fw-bold fs-3" href="/">Draftie.</a>
+            <div class="d-flex align-items-center gap-4">
+                <a class="navbar-brand fw-bold fs-3" href="/">Draftie.</a>
+                
+                <div class="d-none d-md-flex gap-3">
+                    <a href="/guide/shorts" class="text-secondary text-decoration-none small hover-white">쇼츠 가이드</a>
+                    <a href="/guide/reels" class="text-secondary text-decoration-none small hover-white">릴스 꿀팁</a>
+                </div>
+            </div>
+
             <div>
                 <a href="/login" class="btn btn-outline-light btn-sm rounded-pill px-4 me-2">로그인</a>
                 <a href="/signup" class="btn btn-primary btn-sm rounded-pill px-4 fw-bold" style="background-color: var(--draftie-yellow); border: none; color: #000;">시작하기</a>
             </div>
         </div>
     </nav>
+    
+    <style>
+        .hover-white:hover { color: #fff !important; }
+    </style>
 
     <section class="hero-section text-center container">
         <h1 class="display-3 fw-bold mb-4">
