@@ -3,48 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>유튜브 쇼츠 기획 가이드 - Draftie</title>
+    <title>유튜브 쇼츠 기획 가이드 & 예시 - Draftie</title>
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXX" crossorigin="anonymous"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <style>
-        body { background-color: #050505; color: #fff; line-height: 1.8; }
+        body { background-color: #050505; color: #fff; line-height: 1.8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         .content-box { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
-        h1 { color: #FFD700; margin-bottom: 30px; }
-        h2 { margin-top: 40px; border-bottom: 1px solid #333; padding-bottom: 10px; color: #eee; }
-        p { color: #ccc; font-size: 1.1rem; }
+        h1 { color: #FFD700; margin-bottom: 30px; font-weight: 800; }
+        h2 { margin-top: 50px; border-bottom: 1px solid #333; padding-bottom: 10px; color: #eee; font-weight: 700; }
+        h3 { color: #FFD700; margin-top: 30px; font-size: 1.3rem; }
+        p { color: #ccc; font-size: 1.05rem; }
         .highlight { color: #FFD700; font-weight: bold; }
+        
+        /* 샘플 카드 스타일 */
+        .sample-card { background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .scene-badge { background-color: #333; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; display: inline-block; }
+        .script-text { font-style: italic; color: #aaa; border-left: 3px solid #FFD700; padding-left: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-dark border-bottom border-secondary border-opacity-25 mb-5">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">Draftie.</a>
-            <a href="/signup" class="btn btn-outline-light btn-sm rounded-pill">기획안 만들기</a>
+            <div class="d-flex gap-2">
+                 <a href="/guide/reels" class="btn btn-sm text-secondary">릴스 가이드 보기</a>
+                <a href="/signup" class="btn btn-outline-light btn-sm rounded-pill px-3">기획안 만들기</a>
+            </div>
         </div>
     </nav>
 
     <div class="content-box">
-        <h1>🚀 유튜브 쇼츠, 3초 안에 승부 보는 법</h1>
-        <p>유튜브 쇼츠(Shorts)는 초반 3초의 후킹(Hooking)이 조회수를 결정합니다. Draftie AI가 분석한 성공적인 쇼츠 기획의 3가지 법칙을 소개합니다.</p>
+        <span class="badge bg-warning text-dark mb-2">YouTube Shorts</span>
+        <h1>🚀 쇼츠 조회수, 3초 안에 결정됩니다</h1>
+        <p>유튜브 쇼츠(Shorts)는 스와이프와의 전쟁입니다. 초반 3초의 후킹(Hooking)이 없다면 시청자는 냉정하게 다음 영상으로 넘어가버립니다.</p>
 
-        <h2>1. 시각적 충격으로 시작하세요</h2>
-        <p>대사로 시작하는 것보다 <span class="highlight">강렬한 이미지나 행동</span>으로 시작하는 것이 이탈률을 50% 이상 줄입니다. 시청자는 소리를 끄고 보는 경우도 많기 때문입니다.</p>
+        <h2>💡 성공적인 쇼츠의 3법칙</h2>
+        <p>Draftie AI가 수천 개의 인기 영상을 분석한 결과, 공통적인 성공 패턴이 발견되었습니다.</p>
+        <ul>
+            <li><strong>시각적 충격 (0-3초):</strong> 설명하지 말고 보여주세요. 완성된 요리, 깨진 물건, 놀라운 결과물을 먼저 보여줍니다.</li>
+            <li><strong>빠른 템포 (Speed):</strong> 1컷당 길이는 2~3초를 넘기지 마세요. 늘어지는 순간 이탈합니다.</li>
+            <li><strong>반전/질문 (Ending):</strong> 댓글을 유도하거나 영상을 다시 보게 만드는 장치를 심으세요.</li>
+        </ul>
 
-        <h2>2. 스토리텔링의 속도감</h2>
-        <p>기승전결을 60초 안에 담아야 합니다. 1컷당 길이는 2~3초를 넘기지 않는 것이 좋습니다. Draftie를 사용하면 AI가 자동으로 컷 전환 타이밍을 계산해 줍니다.</p>
+        <h2>📝 [샘플] AI가 기획한 '초간단 야식' 쇼츠</h2>
+        <p class="mb-4">Draftie에 <strong>"자취생을 위한 3분 라면 레시피"</strong>라고 입력했을 때 나오는 실제 기획안 예시입니다.</p>
 
-        <h2>3. 마지막에 반전이나 질문 남기기</h2>
-        <p>댓글 참여를 유도하거나, 영상을 다시 보게 만드는(Re-watch) 장치를 심어두세요. 알고리즘 점수가 급상승합니다.</p>
+        <div class="sample-card">
+            <div class="d-flex justify-content-between">
+                <span class="scene-badge">Scene 1 (0-3초)</span>
+                <span class="text-secondary small">Hooking</span>
+            </div>
+            <p class="mb-2 fw-bold text-white">화면 설명</p>
+            <p class="text-secondary small">보글보글 끓는 빨간 국물 위에 치즈가 쭈욱 늘어나는 모습을 클로즈업으로 보여준다. (김이 모락모락 나는 고퀄리티 연출)</p>
+            <div class="script-text">"이거 보고도 라면 안 먹을 수 있어? 딱 3분이면 돼."</div>
+        </div>
+
+        <div class="sample-card">
+            <div class="d-flex justify-content-between">
+                <span class="scene-badge">Scene 2 (4-10초)</span>
+                <span class="text-secondary small">Process</span>
+            </div>
+            <p class="mb-2 fw-bold text-white">화면 설명</p>
+            <p class="text-secondary small">빠른 배속 화면. 물 끓이기 -> 스프 투하 -> 비법 소스(마요네즈) 한 스푼 넣는 장면을 타이트하게 편집.</p>
+            <div class="script-text">"비법은 바로 마요네즈 반 스푼! 고소함이 폭발한다고."</div>
+        </div>
+
+        <div class="sample-card">
+            <div class="d-flex justify-content-between">
+                <span class="scene-badge">Scene 3 (11-15초)</span>
+                <span class="text-secondary small">Ending</span>
+            </div>
+            <p class="mb-2 fw-bold text-white">화면 설명</p>
+            <p class="text-secondary small">주인공이 국물을 한 입 먹고 눈이 동그랗게 커지며 엄지를 치켜든다. 화면 페이드 아웃.</p>
+            <div class="script-text">"와... 이건 진짜 못 참지. 오늘 밤 야식은 이걸로 정했지?"</div>
+        </div>
 
         <div class="mt-5 text-center p-5 border border-secondary border-opacity-25 rounded bg-dark">
-            <h3>지금 바로 AI로 기획해 보세요</h3>
-            <p class="mb-4">아이디어만 있으면 대본부터 콘티까지 30초면 완성됩니다.</p>
-            <a href="/signup" class="btn btn-warning fw-bold px-4 py-2">무료로 시작하기</a>
+            <h3 class="mt-0">내 아이디어도 이렇게 기획해 볼까요?</h3>
+            <p class="mb-4">주제만 적으면 AI가 대사부터 콘티까지 30초 만에 짜드립니다.</p>
+            <a href="/signup" class="btn btn-warning fw-bold px-5 py-3 rounded-pill fs-5">무료로 기획안 만들기</a>
         </div>
     </div>
-    
-    </body>
+</body>
 </html>
