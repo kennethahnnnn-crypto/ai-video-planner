@@ -263,6 +263,10 @@ def guide_shorts():
 def guide_reels():
     return render_template('guide_reels.html')
 
+@app.route('/gallery')
+def gallery():
+    return render_template('gallery.html')
+
 # if __name__ == '__main__':  <-- 이 줄 위에 넣으세요!
 #     app.run(...)
 
