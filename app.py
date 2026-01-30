@@ -75,6 +75,10 @@ def generate_image_for_scene(scene):
 
 # ================= 라우트(페이지) 정의 =================
 
+@app.route('/gallery')
+def gallery():
+    return render_template('gallery.html')
+
 @app.route('/')
 def index():
     # 로그인이 되어 있다면 -> 바로 기획 도구(index.html) 화면으로

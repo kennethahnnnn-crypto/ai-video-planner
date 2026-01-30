@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draftie 기획안 갤러리 - AI가 만든 실제 예시</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <style>
+        body { background-color: #050505; color: #fff; font-family: sans-serif; }
+        .card { background-color: #1a1a1a; border: 1px solid #333; margin-bottom: 20px; }
+        .badge-shorts { background-color: #FF0000; color: white; }
+        .badge-reels { background-color: #E1306C; color: white; }
+        .badge-tiktok { background-color: #000; border: 1px solid #333; color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark border-bottom border-secondary border-opacity-25 mb-5">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">Draftie.</a>
+            <div class="d-flex gap-3">
+                <a href="/gallery" class="text-white text-decoration-none fw-bold">갤러리</a>
+                <a href="/guide/shorts" class="text-secondary text-decoration-none">가이드</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <h1 class="text-center mb-5 fw-bold"><span style="color: #FFD700;">AI 기획안</span> 갤러리</h1>
+        <p class="text-center text-secondary mb-5">Draftie 사용자들이 생성한 실제 숏폼 기획안 예시를 모았습니다.<br>로그인 없이 다양한 시나리오 구성을 확인해보세요.</p>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <span class="badge badge-reels w-auto mb-2" style="width:fit-content;">Instagram Reels</span>
+                    <h4>🇯🇵 오사카 2박3일 핵심 코스</h4>
+                    <p class="text-secondary small">주제: 직장인을 위한 주말 밤도깨비 여행</p>
+                    <hr class="border-secondary">
+                    <p class="small text-warning">Scene 1 (0-3s)</p>
+                    <p class="small">화면: 도톤보리 글리코상 앞에서 두 팔 벌리고 점프하는 주인공 (슬로우 모션)</p>
+                    <p class="small fst-italic">대사: "월차 없이 떠나는 오사카? 이거면 돼."</p>
+                    <hr class="border-secondary">
+                    <p class="small text-warning">Scene 2 (4-10s)</p>
+                    <p class="small">화면: 타코야키 굽는 장면 -> 편의점 푸딩 먹방 -> 유니버셜 스튜디오 지구본 (빠른 컷 전환)</p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <span class="badge badge-shorts w-auto mb-2" style="width:fit-content;">YouTube Shorts</span>
+                    <h4>💪 헬스장 초보 루틴 3가지</h4>
+                    <p class="text-secondary small">주제: 헬린이를 위한 머신 사용법</p>
+                    <hr class="border-secondary">
+                    <p class="small text-warning">Scene 1 (0-3s)</p>
+                    <p class="small">화면: 헬스장에 들어와서 어리둥절 두리번거리는 주인공의 뒷모습</p>
+                    <p class="small fst-italic">대사: "헬스장 끊어놓고 런닝머신만 하다 오는 사람?"</p>
+                    <hr class="border-secondary">
+                    <p class="small text-warning">Scene 2 (4-10s)</p>
+                    <p class="small">화면: 렛풀다운 머신을 올바른 자세로 당기는 모습 (근육 움직임 강조)</p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <span class="badge badge-tiktok w-auto mb-2" style="width:fit-content;">TikTok</span>
+                    <h4>🍳 5분 컷! 다이어트 양배추 덮밥</h4>
+                    <p class="text-secondary small">주제: 살 안 찌는 자취 요리</p>
+                    <hr class="border-secondary">
+                    <p class="small text-warning">Scene 1 (0-3s)</p>
+                    <p class="small">화면: 완성된 덮밥 위에 노른자를 톡 터뜨리는 클로즈업 샷</p>
+                    <p class="small fst-italic">대사: "-5kg 감량 보장! 맛있는 다이어트 레시피 공개."</p>
+                </div>
+            </div>
+             
+             <div class="col-md-6">
+                <div class="card p-4">
+                    <span class="badge badge-shorts w-auto mb-2" style="width:fit-content;">YouTube Shorts</span>
+                    <h4>📱 아이폰 vs 갤럭시, 사진 색감 비교</h4>
+                    <p class="text-secondary small">주제: 블라인드 테스트 결과</p>
+                    <hr class="border-secondary">
+                    <p class="small text-warning">Scene 1 (0-3s)</p>
+                    <p class="small">화면: 같은 풍경을 찍은 두 장의 사진을 반반 나눠서 보여줌</p>
+                    <p class="small fst-italic">대사: "왼쪽이 아이폰일까? 오른쪽이 아이폰일까?"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5 p-4 border border-secondary border-opacity-25 rounded">
+             <h3 class="fw-bold mb-3">왜 AI 기획이 필요할까요?</h3>
+             <p class="text-secondary">콘텐츠 제작에서 가장 시간이 많이 걸리는 것은 '기획'입니다. Draftie는 빅데이터를 기반으로 조회수가 잘 나오는 구조를 학습했습니다...</p>
+             </div>
+    </div>
+</body>
+</html>
