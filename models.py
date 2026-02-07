@@ -30,3 +30,13 @@ class Project(db.Model):
     scenes_json = db.Column(db.Text, nullable=False)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# models.py 맨 아래에 추가
+
+class TrialLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ip_address = db.Column(db.String(50), nullable=False) # IPv6도 고려해서 넉넉하게
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<TrialLog {self.ip_address}>'

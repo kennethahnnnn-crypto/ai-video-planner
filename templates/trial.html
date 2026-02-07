@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>무료 체험 - Draftie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <style>
+        body { background-color: #050505; color: white; }
+        .trial-container { max-width: 600px; margin: 100px auto; padding: 20px; }
+        .magic-input { background: #1a1a1a; border: 1px solid #333; color: white; padding: 20px; font-size: 1.2rem; border-radius: 12px; }
+        .magic-input:focus { border-color: #FFD700; outline: none; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        .btn-magic { background: linear-gradient(45deg, #FFD700, #FFC000); border: none; color: black; font-weight: bold; padding: 15px 30px; font-size: 1.1rem; }
+        .btn-magic:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <div class="trial-container text-center">
+        <span class="badge border border-warning text-warning rounded-pill mb-3">Free Trial</span>
+        <h1 class="fw-bold mb-4">로그인 없이<br>1초 만에 기획하기</h1>
+        <p class="text-secondary mb-5">딱 한 번의 기회입니다. 어떤 영상을 만들고 싶으신가요?</p>
+
+        <form action="/try/generate" method="POST">
+            <div class="mb-4">
+                <input type="text" name="topic" class="form-control magic-input" placeholder="예: 자취생 간단 요리, 5분 헬스 루틴..." required>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-magic rounded-pill" id="generateBtn">
+                    ✨ 무료로 기획안 생성하기
+                </button>
+            </div>
+            
+            <p class="mt-3 small text-secondary">
+                <span id="loadingMsg" style="display:none;">AI가 머리를 굴리고 있습니다... (약 15초 소요) 🧠</span>
+            </p>
+        </form>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').innerHTML = '생성 중... ⏳';
+            document.getElementById('loadingMsg').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

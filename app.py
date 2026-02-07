@@ -2,8 +2,7 @@ import os
 import json
 import time
 import requests # 이미지 다운로드용
-from flask import Flask, render_template, request, redirect, url_for, flash
-# import google.generativeai as genai  <-- 삭제함 (더 이상 안 씀)
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory, make_response # <--- 추가# import google.generativeai as genai  <-- 삭제함 (더 이상 안 씀)
 from google import genai as genai_v2 # 신버전 SDK (이것만 씀)
 from google.genai import types
 import replicate # [NEW] Replicate 추가
@@ -14,7 +13,9 @@ from concurrent.futures import ThreadPoolExecutor
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Project
+# app.py 상단 imports 부분 수정
+from models import db, User, Project, TrialLog  # <--- TrialLog 추가!
+from datetime import datetime, timedelta # 시간 계산용
 
 load_dotenv()
 
@@ -266,6 +267,68 @@ def guide_reels():
 @app.route('/gallery')
 def gallery():
     return render_template('gallery.html')
+
+# [NEW] 비로그인 1회 체험 기능 (Double Lock: IP + Cookie)
+
+# 진짜 IP 주소 가져오는 함수 (Render 같은 서버 환경 고려)
+def get_client_ip():
+    if request.headers.getlist("X-Forwarded-For"):
+        return request.headers.getlist("X-Forwarded-For")[0]
+    return request.remote_addr
+
+@app.route('/try', methods=['GET'])
+def trial_page():
+    # 1차 방어: 쿠키 확인
+    if request.cookies.get('trial_used'):
+        flash('무료 체험 기회를 이미 사용하셨습니다. 가입 후 무제한으로 이용하세요! 🚀', 'warning')
+        return redirect(url_for('signup'))
+    
+    return render_template('trial.html')
+
+@app.route('/try/generate', methods=['POST'])
+def trial_generate():
+    client_ip = get_client_ip()
+
+    # 2차 방어: DB 확인 (IP 체크)
+    existing_log = TrialLog.query.filter_by(ip_address=client_ip).first()
+    
+    # [개발자 테스트용] 로컬호스트(127.0.0.1)는 테스트를 위해 막지 않으려면 아래 줄 주석 처리
+    if existing_log: 
+        flash('이미 무료 체험을 완료하신 IP입니다. 회원가입 후 결과를 저장하세요! 💾', 'warning')
+        return redirect(url_for('signup'))
+
+    topic = request.form.get('topic')
+    platform = request.form.get('platform', 'YouTube Shorts')
+    
+    if not topic:
+        return redirect(url_for('trial_page'))
+
+    try:
+        # 1. AI 기획안 생성 (기존 함수 재사용)
+        script_data = generate_video_script(topic, platform)
+        
+        # 2. 결과가 잘 나왔으면 기록 남기기 (Lock)
+        if script_data:
+            # DB에 IP 저장
+            new_log = TrialLog(ip_address=client_ip)
+            db.session.add(new_log)
+            db.session.commit()
+            
+            # 결과 페이지 렌더링 (쿠키 설정은 response 객체에서 함)
+            response = make_response(render_template('trial_result.html', project=script_data))
+            
+            # 3. 브라우저에 쿠키 도장 쾅! (유효기간 1년)
+            expires = datetime.now() + timedelta(days=365)
+            response.set_cookie('trial_used', 'true', expires=expires)
+            
+            return response
+            
+    except Exception as e:
+        print(f"Trial Error: {e}")
+        flash("AI 서버가 바쁩니다. 잠시 후 다시 시도해주세요.", "danger")
+        return redirect(url_for('trial_page'))
+
+    return redirect(url_for('trial_page'))
 
 # if __name__ == '__main__':  <-- 이 줄 위에 넣으세요!
 #     app.run(...)

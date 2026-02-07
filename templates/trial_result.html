@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>체험 결과 - Draftie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <style>
+        body { background-color: #050505; color: white; }
+        .blur-overlay { position: relative; }
+        .blur-overlay::after {
+            content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;
+            background: linear-gradient(to bottom, transparent, #050505); pointer-events: none;
+        }
+        .cta-box { border: 1px solid #FFD700; background: rgba(255, 215, 0, 0.1); border-radius: 12px; padding: 30px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold">🎉 기획안이 생성되었습니다!</h1>
+            <p class="text-secondary">이 페이지를 닫으면 다시 볼 수 없습니다.</p>
+        </div>
+
+        <div class="card bg-dark border-secondary mb-5 blur-overlay">
+            <div class="card-body p-4">
+                <h3 class="fw-bold text-warning mb-3">{{ project.title }}</h3>
+                <div class="p-3 bg-black rounded mb-3">
+                    <strong>Opening:</strong> {{ project.opening }}
+                </div>
+                
+                <h5 class="mt-4 border-bottom border-secondary pb-2">Scenes</h5>
+                {% for scene in project.scenes %}
+                <div class="row align-items-center mb-3 py-3 border-bottom border-secondary border-opacity-25">
+                    <div class="col-md-2 text-warning fw-bold">Scene {{ scene.scene_number }}</div>
+                    <div class="col-md-10">
+                        <p class="mb-1 text-white">{{ scene.description }}</p>
+                        <p class="mb-0 text-secondary small fst-italic">"{{ scene.script }}"</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="cta-box text-center">
+            <h3 class="fw-bold mb-3">💾 이 기획안을 저장하시겠습니까?</h3>
+            <p class="text-secondary mb-4">
+                지금 무료 회원가입하면 이 기획안을 <b>PDF로 다운로드</b>하거나<br>
+                <b>나만의 보관함</b>에 영구 저장할 수 있습니다.
+            </p>
+            <div class="d-grid gap-3 d-sm-flex justify-content-center">
+                <a href="/signup" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">회원가입하고 저장하기</a>
+                <a href="/" class="btn btn-outline-light btn-lg px-5 rounded-pill">홈으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
